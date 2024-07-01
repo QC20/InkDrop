@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Filter Example</title>
+    <link rel="stylesheet" href="src/styles/styles.css">
+</head>
+<body>
+    <svg id="svg-container" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- Inky filter -->
+            <filter id="inkyFilter" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" y="0" x="0" width="1" height="2">
+                <feTurbulence numOctaves="1" baseFrequency="0.6 0.1" result="buffer0"/>
+                <feColorMatrix type="matrix" values="1 0 0 0 0.5
+                                                     0 1 0 0 0
+                                                     0 0 1 0 0
+                                                     0 0 0 0 0.5" 
+                               in="buffer0" result="map" />
+                <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="A" yChannelSelector="R" scale="-50" result="didDisplace"/>
+                <feMerge>
+                    <feMergeNode in="SourceGraphic"/>
+                    <feMergeNode in="didDisplace" />
+                </feMerge>
+            </filter>
+            
+            <!-- Image filter -->
+            <filter id="imgFilter" width="1" height="1" x="0" y="0%" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox">
+                <feComponentTransfer in="SourceGraphic" result="didRetouch">
+                    <feFuncR type="gamma" exponent="1"/>
+                    <feFuncG type="gamma" exponent="0.31"/>
+                    <feFuncB type="gamma" exponent="1"/>
+                    <feFuncA type="identity" />
+                </feComponentTransfer>
+                <feColorMatrix type="saturate" values="0" in="didRetouch" result="didGrayscale"/>
+                <feComponentTransfer in="didGrayscale" result="didBW">
+                    <feFuncR type="discrete" tableValues="0 1"/>
+                    <feFuncG type="discrete" tableValues="0 1"/>
+                    <feFuncB type="discrete" tableValues="0 1"/>
+                    <feFuncA type="identity"/>
+                </feComponentTransfer>
+                <feColorMatrix type="matrix" values="0 0 0 0 0
+                                                     0 0 0 0 0
+                                                     0 0 0 0 0
+                                                     1 0 0 0 0"
+                               in="didBW" result="didWash">
+                </feColorMatrix>
+                <feComponentTransfer in="didWash">
+                    <feFuncR type="identity"/>
+                    <feFuncG type="identity"/>
+                    <feFuncB type="identity"/>
+                    <feFuncA type="discrete" tableValues="1 0"/>
+                </feComponentTransfer>
+            </filter>
+        </defs>
+        <g style="filter:url(#inkyFilter)">
+            <image href="//images.pexels.com/photos/789812/pexels-photo-789812.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" 
+                   width="100%" height="100%" transform="" preserveAspectRatio="xMidYMid slice"
+                   style="filter:url(#imgFilter)" x="0"/>
+        </g>
+    </svg>
+
+    <script src="src/javascript/sketch.js"></script>
+</body>
+</html>
