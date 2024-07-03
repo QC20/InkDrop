@@ -53,3 +53,50 @@ if (isEdge) {
     feDM.insertAdjacentHTML("beforeend", `<animate attributeType="XML" attributeName="scale" 
   from="${-from}" to="${-to}" dur="${dur}s" fill="freeze" repeatCount="1"/>`);
 }
+
+// Add this new code at the end of the file
+const images = [
+    'src/assets/img/1.jpg',
+    'src/assets/img/2.png',
+    'src/assets/img/3.jpg',
+    'src/assets/img/4.jpg',
+    'src/assets/img/5.jpg'
+];
+
+let currentImageIndex = 0;
+const carouselImage = document.getElementById('carousel-image');
+
+function changeImage() {
+    const nextImageIndex = (currentImageIndex + 1) % images.length;
+    const nextImage = new Image();
+    nextImage.src = images[nextImageIndex];
+    
+    nextImage.onload = () => {
+        // Fade out current image
+        carouselImage.style.transition = 'opacity 1s';
+        carouselImage.style.opacity = 0;
+        
+        setTimeout(() => {
+            // Change image source
+            carouselImage.setAttribute('href', images[nextImageIndex]);
+            
+            // Fade in new image
+            carouselImage.style.opacity = 1;
+            
+            currentImageIndex = nextImageIndex;
+        }, 1000);
+    };
+}
+
+// Start the carousel
+setInterval(changeImage, 7000);
+
+// Trigger the displacement animation
+if (isEdge) {
+    const anima = animate({ attrName: "scale", dur, from, to, repeatCount: Infinity });
+    anima(document.querySelector("#inkyFilter feDisplacementMap"));
+} else {
+    const feDM = document.querySelector("#inkyFilter feDisplacementMap");
+    feDM.insertAdjacentHTML("beforeend", `<animate attributeType="XML" attributeName="scale" 
+  from="${-from}" to="${-to}" dur="${dur}s" fill="freeze" repeatCount="indefinite"/>`);
+}
